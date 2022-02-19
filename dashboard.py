@@ -24,7 +24,7 @@ st.markdown("""
 <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align: center; color: black;font-family: Lato, sans-serif;font-weight:400'>PRN Johor Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("<h2 style='margin:-50px;padding:0px;height: 2em;overflow:auto;color: #4682B4;font-size:25px;border-bottom: 1px solid #ccc; padding-bottom: 10px;font-family: Lato, sans-serif;font-weight:900'>PRN Johor Dashboard</h2>", unsafe_allow_html=True)
 
 # st.title("PRN Johor Dashboard")
 
@@ -165,12 +165,11 @@ if choice == "DUN":
     featureidkey='properties.DUN',  # path to field in GeoJSON feature object with which to match the values passed in to locations
     color = df['predicted_win'],
     hover_name = 'DUN',
-    # hover_data =['DUN','Non-PH','Not Sure/Others','PH'],
     custom_data = ['DUN','Non-PH','Not Sure/Others','PH'],
     labels = {'predicted_win': 'win'},
     # color_discrete_map = {
-    # 'PH' : 'lightgray',
-    # 'Non PH' : '#FFF5EE',
+    # 'PH' : '#00BFFF',
+    # 'Non PH' : '#000080',
     # 'Not Sure/Others': '#DC143C',
     # },
     basemap_visible = False,
@@ -179,7 +178,6 @@ if choice == "DUN":
     )
 
     fig.update_layout(showlegend=False)
-
     fig.update_geos(fitbounds="locations")
 
     #<extra></extra> tag remove the secondary box
@@ -215,9 +213,9 @@ else:
     custom_data = ['Parliament','Non-PH','Not Sure/Others','PH'],
     labels = {'predicted_win': 'win'},
     # color_discrete_map = {
-    # 'PH' : 'lightgray',
-    # 'Non PH' : 'mediumseagreen',
-    # 'Not Sure/Others': 'mediumseagreen',
+    # 'PH' : '#00BFFF',
+    # 'Non PH' : '#000080',
+    # 'Not Sure/Others': '#DC143C',
     # },
     basemap_visible = False,
     scope="asia",
@@ -251,76 +249,46 @@ fig.update_layout(width=1300,height=700)
 st.plotly_chart(fig, use_container_width=True)
 
 
+#will create a filter option
+m = st.markdown("""
+<style>
+div.Multiselect > multiselect:first-child {
+    background-color: rgb(204, 49, 49);
+    width: 30px;
+}
+</style>""", unsafe_allow_html=True)
 
-#an expander widget to display all the dun/par % --> table
-#to create a widget automatically
-# @st.cache(suppress_st_warning=True)
-# def custom_expander_dun(df):
-#     idc = df.index.to_list()
-#     with st.expander(df.loc[idc[0], 'DUN No'] + " " + str(df.loc[idc[0], 'DUN'])):
-#
-#             col1, col2 = st.columns(2)
-#             with col1:
-#
-#                 st.subheader('PH ' + str(df.loc[idc[0], 'PH']) + "%")
-#                 st.subheader('Non-PH ' + str(df.loc[idc[0], 'Non-PH']) + "%")
-#                 st.subheader('Not Sure/Others ' + str(df.loc[idc[0], 'Not Sure/Others']) + "%")
-#
-#             with col2:
-#                 st.info("Demographics")
-#
-# #need to take into accoun that a parliament has several duns under it --> will need to divide properly
-# def custom_expander_par(df):
-#     idc = df.index.to_list()
-#     with st.expander(df.loc[idc[0], 'Par No'] + " " + str(df.loc[idc[0], 'Parliament'])):
-#
-#         col1, col2 = st.columns(2)
-#         with col1:
-#
-#             st.subheader('PH ' + str(df.loc[idc[0], 'PH']) + "%")
-#             st.subheader('Non-PH ' + str(df.loc[idc[0], 'Non-PH']) + "%")
-#             st.subheader('Not Sure/Others ' + str(df.loc[idc[0], 'Not Sure/Others']) + "%")
-#
-#             with col2:
-#                 st.info("Demographics")
-#
-#
-#
-# #customizing the show all button
-# # m = st.markdown("""
-# # <style>
-# # div.stButton > button:first-child {
-# #     color: #FFFFFF;
-# #     border-radius: 20%;
-# #     background-color: #B22222;
-# #     height: 1.5em;
-# #     width: 5em;
-# #     position:relative;left:90%;
-# #     font-size:20px
-# # }
-# # </style>""", unsafe_allow_html=True)
-# if (choice == 'DUN'):
-#     for d in lst_dun:
-#         custom_expander_dun(df[df['DUN']==d])
-#
-# elif (choice == 'Parliament'):
-#     for p in lst_par:
-#         custom_expander_par(df[df['Parliament']==p])
+
+# option = st.multiselect('Filter by: ',['PH', 'Non-PH', 'Fence Sitters'],['PH', 'Non-PH', 'Fence Sitters'])
+
+
 
 
 #will create a card using boostrap incorporated into streamlit
-def card_dun(header, ph_value, non_value, notsure_value):
+def card_dun(header, ph_value, non_value, notsure_value, color_lst):
     return f"""
         <div class="d-flex mt-5 justify-content-center" style="padding-left: 50px;">
-			<div class="card text-center" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: #DC143C;color: #FFFFFF">
+			<div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+				<div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
                 {header[0]}
                 </div>
 				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>: {ph_value[0]}%
+                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}%"></div>
+                        </div>
                     </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>: {non_value[0]}%</a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>: {notsure_value[0]}%</a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}%"></div>
+                        </div>
+                    </a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}%"></div>
+                        </div>
+                    </a>
+                </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
                         <strong>Demographics <br> </strong>
@@ -330,15 +298,26 @@ def card_dun(header, ph_value, non_value, notsure_value):
                         Others: <br>
                 </div>
 			</div>
-			<div class="card text-center" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: #DC143C;color: #FFFFFF">
+			<div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+				<div class="card-header" style="background-color: {color_lst[1]};color: #FFFFFF">
                 {header[1]}
                 </div>
 				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>: {ph_value[1]}%
+                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}%"></div>
+                        </div>
                     </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>: {non_value[1]}%</a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>: {notsure_value[1]}%</a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}%"></div>
+                        </div>
+                    </a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}%"></div>
+                        </div>
+                    </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
                         <strong>Demographics <br> </strong>
@@ -348,15 +327,26 @@ def card_dun(header, ph_value, non_value, notsure_value):
                         Others: <br>
                 </div>
 			</div>
-            <div class="card text-center" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: #DC143C;color: #FFFFFF">
+            <div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+				<div class="card-header" style="background-color: {color_lst[2]};color: #FFFFFF">
                 {header[2]}
                 </div>
 				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>: {ph_value[2]}%
+                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[2]}%"></div>
+                        </div>
                     </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>: {non_value[2]}%</a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>: {notsure_value[2]}%</a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[2]}%"></div>
+                        </div>
+                    </a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[2]}%"></div>
+                        </div>
+                    </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
                         <strong>Demographics <br> </strong>
@@ -366,15 +356,26 @@ def card_dun(header, ph_value, non_value, notsure_value):
                         Others: <br>
                 </div>
 			</div>
-            <div class="card text-center" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: #DC143C;color: #FFFFFF">
+            <div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+				<div class="card-header" style="background-color: {color_lst[3]};color: #FFFFFF">
                 {header[3]}
                 </div>
 				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>: {ph_value[3]}%
+                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[3]}%"></div>
+                        </div>
                     </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>: {non_value[3]}%</a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>: {notsure_value[3]}%</a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[3]}%"></div>
+                        </div>
+                    </a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[3]}%"></div>
+                        </div>
+                    </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
                         <strong>Demographics <br> </strong>
@@ -390,18 +391,29 @@ def card_dun(header, ph_value, non_value, notsure_value):
 
 
 #susun in terms of 2
-def card_par_2(header, ph_value, non_value, notsure_value):
+def card_par_2(header, ph_value, non_value, notsure_value, color_lst):
     return f"""
         <div class="d-flex mt-5 justify-content-center" style="padding-left: 50px;">
-			<div class="card text-center" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: #DC143C;color: #FFFFFF">
+			<div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+				<div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
                 {header[0]}
                 </div>
 				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>: {ph_value[0]}%
+                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}%"></div>
+                        </div>
                     </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>: {non_value[0]}%</a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>: {notsure_value[0]}%</a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}%"></div>
+                        </div>
+                    </a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}%"></div>
+                        </div>
+                    </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
                         <strong>Demographics <br> </strong>
@@ -411,15 +423,26 @@ def card_par_2(header, ph_value, non_value, notsure_value):
                         Others: <br>
                 </div>
 			</div>
-			<div class="card text-center" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: #DC143C;color: #FFFFFF">
+			<div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+				<div class="card-header" style="background-color: {color_lst[1]};color: #FFFFFF">
                 {header[1]}
                 </div>
 				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>: {ph_value[1]}%
+                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}%"></div>
+                        </div>
                     </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>: {non_value[1]}%</a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>: {notsure_value[1]}%</a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}%"></div>
+                        </div>
+                    </a>
+					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+                        <div class="w3-light-grey w3-round-xlarge">
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}%"></div>
+                        </div>
+                    </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
                         <strong>Demographics <br> </strong>
@@ -437,9 +460,6 @@ def card_par_2(header, ph_value, non_value, notsure_value):
 
     """
 
-st.markdown("""
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-""", unsafe_allow_html=True)
 
 st.markdown("""
 <html>
@@ -449,11 +469,29 @@ st.markdown("""
 </html>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+""", unsafe_allow_html=True)
+def return_color(predict):
+    if predict == 'PH':
+        return '#00BFFF'
+    elif predict == 'Non-PH':
+        return '#000080'
+    else:
+        return '#DC143C'
+
+
 if (choice == 'DUN'):
 
     #sort by value of DUN no
     df.sort_values('DUN No', inplace=True)
     lst_dun = df['DUN'].tolist()
+
+
     for i in range(0, len(lst_dun)-1,4):
 
 
@@ -461,6 +499,7 @@ if (choice == 'DUN'):
         ph_lst = []
         non_lst = []
         others_lst = []
+        color_lst = []
 
 
         idc = df[df['DUN']==lst_dun[i]].index.to_list()
@@ -468,24 +507,29 @@ if (choice == 'DUN'):
         ph_val_1 = df.loc[idc[0], 'PH']
         non_val_1 = df.loc[idc[0], 'Non-PH']
         others_val_1 = df.loc[idc[0], 'Not Sure/Others']
+        color_1 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['DUN']==lst_dun[i+1]].index.to_list()
         final_str_2 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
         ph_val_2 = df.loc[idc[0], 'PH']
         non_val_2 = df.loc[idc[0], 'Non-PH']
         others_val_2 = df.loc[idc[0], 'Not Sure/Others']
+        color_2 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['DUN']==lst_dun[i+2]].index.to_list()
         final_str_3 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
         ph_val_3 = df.loc[idc[0], 'PH']
         non_val_3 = df.loc[idc[0], 'Non-PH']
         others_val_3 = df.loc[idc[0], 'Not Sure/Others']
+        color_3 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['DUN']==lst_dun[i+3]].index.to_list()
         final_str_4 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
         ph_val_4 = df.loc[idc[0], 'PH']
         non_val_4 = df.loc[idc[0], 'Non-PH']
         others_val_4 = df.loc[idc[0], 'Not Sure/Others']
+        color_4 = return_color(df.loc[idc[0], 'predicted_win'])
+
 
 
         header_lst.extend([final_str_1, final_str_2, final_str_3, final_str_4])
@@ -495,9 +539,12 @@ if (choice == 'DUN'):
         non_lst = [round(num) for num in non_lst]
         others_lst.extend([others_val_1, others_val_2, others_val_3, others_val_4])
         others_lst = [round(num) for num in others_lst]
+        color_lst.extend([color_1, color_2, color_3, color_4])
+
+
 
         st.markdown(card_dun(
-        header_lst, ph_lst, non_lst, others_lst
+        header_lst, ph_lst, non_lst, others_lst, color_lst
         ), unsafe_allow_html=True)
 
 elif (choice == 'Parliament'):
@@ -519,30 +566,35 @@ elif (choice == 'Parliament'):
         ph_lst = []
         non_lst = []
         others_lst = []
+        color_lst = []
 
         idc = df[df['Parliament']==lst_par[i]].index.to_list()
         final_str_1 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
         ph_val_1 = df.loc[idc[0], 'PH']
         non_val_1 = df.loc[idc[0], 'Non-PH']
         others_val_1 = df.loc[idc[0], 'Not Sure/Others']
+        color_1 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['Parliament']==lst_par[i+1]].index.to_list()
         final_str_2 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
         ph_val_2 = df.loc[idc[0], 'PH']
         non_val_2 = df.loc[idc[0], 'Non-PH']
         others_val_2 = df.loc[idc[0], 'Not Sure/Others']
+        color_2 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['Parliament']==lst_par[i+2]].index.to_list()
         final_str_3 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
         ph_val_3 = df.loc[idc[0], 'PH']
         non_val_3 = df.loc[idc[0], 'Non-PH']
         others_val_3 = df.loc[idc[0], 'Not Sure/Others']
+        color_3 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['Parliament']==lst_par[i+3]].index.to_list()
         final_str_4 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
         ph_val_4 = df.loc[idc[0], 'PH']
         non_val_4 = df.loc[idc[0], 'Non-PH']
         others_val_4 = df.loc[idc[0], 'Not Sure/Others']
+        color_4 = return_color(df.loc[idc[0], 'predicted_win'])
 
         header_lst.extend([final_str_1, final_str_2, final_str_3, final_str_4])
         ph_lst.extend([ph_val_1, ph_val_2, ph_val_3, ph_val_4])
@@ -551,9 +603,11 @@ elif (choice == 'Parliament'):
         non_lst = [round(num) for num in non_lst]
         others_lst.extend([others_val_1, others_val_2, others_val_3, others_val_4])
         others_lst = [round(num) for num in others_lst]
+        color_lst.extend([color_1, color_2, color_3, color_4])
+
 
         st.markdown(card_dun(
-        header_lst, ph_lst, non_lst, others_lst
+        header_lst, ph_lst, non_lst, others_lst, color_lst
         ), unsafe_allow_html=True)
 
 
@@ -562,18 +616,21 @@ elif (choice == 'Parliament'):
         ph_lst = []
         non_lst = []
         others_lst = []
+        color_lst = []
 
         idc = df[df['Parliament']==lst_par[i]].index.to_list()
         final_str_1 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
         ph_val_1 = df.loc[idc[0], 'PH']
         non_val_1 = df.loc[idc[0], 'Non-PH']
         others_val_1 = df.loc[idc[0], 'Not Sure/Others']
+        color_1 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['Parliament']==lst_par[i+1]].index.to_list()
         final_str_2 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
         ph_val_2 = df.loc[idc[0], 'PH']
         non_val_2 = df.loc[idc[0], 'Non-PH']
         others_val_2 = df.loc[idc[0], 'Not Sure/Others']
+        color_2 = return_color(df.loc[idc[0], 'predicted_win'])
 
         header_lst.extend([final_str_1, final_str_2])
         ph_lst.extend([ph_val_1, ph_val_2])
@@ -582,7 +639,8 @@ elif (choice == 'Parliament'):
         non_lst = [round(num) for num in non_lst]
         others_lst.extend([others_val_1, others_val_2])
         others_lst = [round(num) for num in others_lst]
+        color_lst.extend([color_1, color_2])
 
         st.markdown(card_par_2(
-        header_lst, ph_lst, non_lst, others_lst
+        header_lst, ph_lst, non_lst, others_lst, color_lst
         ), unsafe_allow_html=True)
