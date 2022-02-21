@@ -386,12 +386,9 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
                     </a>
                 </a>
 				</div>
-                <div class="card-footer" style="text-align:left; background-color: #FFF5EE">
-                        <strong>
-                            Demographics <i class="fa-solid fa-chart-pie"></i>
-                            <br>
-                        </strong>
-                        Malay: <br>
+                <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+                        <strong>Demographics <br> </strong>
+                        Malay:  <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -419,11 +416,8 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
                     </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>
-                            Demographics <i class="fa-solid fa-chart-pie"></i>
-                            <br>
-                        </strong>
-                        Malay: <br>
+                        <strong>Demographics <br> </strong>
+                        Malay:  <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -451,11 +445,8 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
                     </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>
-                            Demographics <i class="fa-solid fa-chart-pie"></i>
-                            <br>
-                        </strong>
-                        Malay: <br>
+                        <strong>Demographics <br> </strong>
+                        Malay:  <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -483,11 +474,8 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
                     </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>
-                            Demographics <i class="fa-solid fa-chart-pie"></i>
-                            <br>
-                        </strong>
-                        Malay: <br>
+                        <strong>Demographics <br> </strong>
+                        Malay:  <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -509,7 +497,7 @@ def card_par_2(header, ph_value, non_value, notsure_value, color_lst):
 				<div class="list-group list-group-flush">
                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}%">{ph_value[0]}%</div>
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}">{ph_value[0]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
@@ -597,7 +585,6 @@ def return_color(predict):
         return '#DC143C'
 
 
-st.write(df)
 if (choice == 'DUN'):
 
     #sort by value of DUN no
@@ -653,12 +640,6 @@ if (choice == 'DUN'):
         others_lst.extend([others_val_1, others_val_2, others_val_3, others_val_4])
         # others_lst = [round(num) for num in others_lst]
         color_lst.extend([color_1, color_2, color_3, color_4])
-
-
-        st.write(ph_lst)
-        # st.write(ph_lst[0].split("%")[0])
-        ph_lst = [num.split("%")[0] for num in ph_lst]
-        st.write(ph_lst)
 
 
         st.markdown(card_dun(
