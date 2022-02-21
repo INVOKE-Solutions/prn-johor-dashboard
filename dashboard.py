@@ -119,9 +119,11 @@ idc = df[df['DUN']=='KOTA ISKANDAR'].index.to_list()
 df.loc[idc[0], 'DUN'] = 'ISKANDAR PUTERI'
 
 
-df['Non-PH'] = round(df['Non-PH'], 2)
-df['PH'] = round(df['PH'], 2)
-df['Not Sure/Others'] = round(df['Not Sure/Others'], 2)
+df['Non-PH'] = round(df['Non-PH'])
+df['PH'] = round(df['PH'])
+df['Not Sure/Others'] = round(df['Not Sure/Others'])
+
+
 # st.write(df[df['DUN']=='KOTA ISKANDAR'])
 
 #layang2 ada beza space with the one in geojson file
@@ -148,6 +150,20 @@ for i in idc:
 #rearrange the columns
 df = df[['Parliament','Par No','DUN','DUN No','PH','Non-PH','Not Sure/Others','predicted_win']]
 
+#combine for header when hover over each dun
+def combine_dun(x):
+    return "N" + str(x['DUN No']) + " " + str(x['DUN']) + " (" + "P" + str(x['Par No']) + " " + str(x['Parliament']) + ")"
+
+def combine_percent(x):
+    return str(round(x)) + "%"
+
+# df['Parliament_1'] = df.apply(combine_par, axis=1)
+df['DUN_Parliament'] = df.apply(combine_dun, axis=1)
+df['PH'] = df['PH'].apply(combine_percent)
+df['Non-PH'] = df['Non-PH'].apply(combine_percent)
+df['Not Sure/Others'] = df['Not Sure/Others'].apply(combine_percent)
+# st.write(df)
+
 
 #for parliament will need to divide appropriately
 # df
@@ -158,94 +174,174 @@ df = df[['Parliament','Par No','DUN','DUN No','PH','Non-PH','Not Sure/Others','p
 st.sidebar.header("Welcome @user")
 choice = st.sidebar.selectbox("Choose by Parliamen/DUN",['Parliament', 'DUN'])
 
-if choice == "DUN":
-    fig = px.choropleth(data_frame=df,
-    geojson=my_regions_geo_dun,
-    locations='DUN', # name of dataframe column
-    featureidkey='properties.DUN',  # path to field in GeoJSON feature object with which to match the values passed in to locations
-    color = df['predicted_win'],
-    hover_name = 'DUN',
-    custom_data = ['DUN','Non-PH','Not Sure/Others','PH'],
-    labels = {'predicted_win': 'win'},
-    # color_discrete_map = {
-    # 'PH' : '#00BFFF',
-    # 'Non PH' : '#000080',
-    # 'Not Sure/Others': '#DC143C',
-    # },
-    basemap_visible = False,
-    scope="asia",
-    # title = "Map of Johor DUN",
-    )
+# if choice == "DUN":
+#     fig = px.choropleth(data_frame=df,
+#     geojson=my_regions_geo_dun,
+#     locations='DUN', # name of dataframe column
+#     featureidkey='properties.DUN',  # path to field in GeoJSON feature object with which to match the values passed in to locations
+#     color = df['predicted_win'],
+#     hover_name = 'DUN',
+#     custom_data = ['DUN','Non-PH','Not Sure/Others','PH'],
+#     labels = {'predicted_win': 'win'},
+#     # color_discrete_map = {
+#     # 'PH' : '#00BFFF',
+#     # 'Non PH' : '#000080',
+#     # 'Not Sure/Others': '#DC143C',
+#     # },
+#     basemap_visible = False,
+#     scope="asia",
+#     # title = "Map of Johor DUN",
+#     )
+#
+#     fig.update_layout(showlegend=False)
+#     fig.update_geos(fitbounds="locations")
+#
+#     #<extra></extra> tag remove the secondary box
+#     fig.update_traces(
+#     hovertemplate="<br>".join([
+#     "%{customdata[0]}",
+#     "PH: %{customdata[3]}%",
+#     "Non-PH: %{customdata[1]}%",
+#     "Not Sure/Others: %{customdata[2]}% <extra></extra>",
+#     ]))
+#
+#
+#     fig.add_scattergeo(
+#     geojson=my_regions_geo_dun,
+#     locations = df['DUN'],
+#     text = df['DUN No'],
+#     featureidkey="properties.DUN",
+#     mode = 'text',
+#     textfont = dict(size=14, color='white'),
+#     textposition='middle center',
+#     )
+#
+#     fig.update_traces(marker_line_width=0.75, marker_opacity=0.8)
+#
+# #parliament
+# else:
+#     fig = px.choropleth(data_frame=df,
+#     geojson=my_regions_geo_par,
+#     locations='Parliament', # name of dataframe column
+#     featureidkey='properties.Parliament',  # path to field in GeoJSON feature object with which to match the values passed in to locations
+#     color = df['predicted_win'],
+#     hover_name = 'Parliament',
+#     custom_data = ['Parliament','Non-PH','Not Sure/Others','PH'],
+#     labels = {'predicted_win': 'win'},
+#     # color_discrete_map = {
+#     # 'PH' : '#00BFFF',
+#     # 'Non PH' : '#000080',
+#     # 'Not Sure/Others': '#DC143C',
+#     # },
+#     basemap_visible = False,
+#     scope="asia",
+#     )
+#
+#     fig.update_layout(showlegend=False)
+#     fig.update_geos(fitbounds="locations")
+#
+#     fig.update_traces(hovertemplate="<br>".join([
+#     "%{customdata[0]}",
+#     "PH: %{customdata[3]}%",
+#     "Non-PH: %{customdata[1]}%",
+#     "Not Sure/Others: %{customdata[2]}% <extra></extra>",
+#     ]))
+#
+#     fig.add_trace(go.Scattergeo(
+#     geojson=my_regions_geo_par,
+#     locations = df['Parliament'],
+#     text = df['Par No'],
+#     featureidkey="properties.Parliament",
+#     mode = 'text',
+#     textfont = dict(size=14, color='white'),
+#     textposition='top left'
+#     ))
+#
+#     fig.update_traces(marker_line_width=0.75, marker_opacity=0.8)
+#
+#
+# # fig.update_layout(plot_bgcolor='rgb(240, 248, 255)')
+# fig.update_layout(width=1300,height=700)
+# st.plotly_chart(fig, use_container_width=True)
 
-    fig.update_layout(showlegend=False)
-    fig.update_geos(fitbounds="locations")
 
-    #<extra></extra> tag remove the secondary box
-    fig.update_traces(
-    hovertemplate="<br>".join([
-    "%{customdata[0]}",
-    "PH: %{customdata[3]}%",
-    "Non-PH: %{customdata[1]}%",
-    "Not Sure/Others: %{customdata[2]}% <extra></extra>",
-    ]))
-
-
-    fig.add_scattergeo(
-    geojson=my_regions_geo_dun,
-    locations = df['DUN'],
-    text = df['DUN No'],
-    featureidkey="properties.DUN",
-    mode = 'text',
-    textfont = dict(size=14, color='white'),
-    textposition='middle center',
-    )
-
-    fig.update_traces(marker_line_width=0.75, marker_opacity=0.8)
-
-#parliament
-else:
-    fig = px.choropleth(data_frame=df,
-    geojson=my_regions_geo_par,
-    locations='Parliament', # name of dataframe column
-    featureidkey='properties.Parliament',  # path to field in GeoJSON feature object with which to match the values passed in to locations
-    color = df['predicted_win'],
-    hover_name = 'Parliament',
-    custom_data = ['Parliament','Non-PH','Not Sure/Others','PH'],
-    labels = {'predicted_win': 'win'},
-    # color_discrete_map = {
-    # 'PH' : '#00BFFF',
-    # 'Non PH' : '#000080',
-    # 'Not Sure/Others': '#DC143C',
-    # },
-    basemap_visible = False,
-    scope="asia",
-    )
-
-    fig.update_layout(showlegend=False)
-    fig.update_geos(fitbounds="locations")
-
-    fig.update_traces(hovertemplate="<br>".join([
-    "%{customdata[0]}",
-    "PH: %{customdata[3]}%",
-    "Non-PH: %{customdata[1]}%",
-    "Not Sure/Others: %{customdata[2]}% <extra></extra>",
-    ]))
-
-    fig.add_trace(go.Scattergeo(
-    geojson=my_regions_geo_par,
-    locations = df['Parliament'],
-    text = df['Par No'],
-    featureidkey="properties.Parliament",
-    mode = 'text',
-    textfont = dict(size=14, color='white'),
-    textposition='top left'
-    ))
-
-    fig.update_traces(marker_line_width=0.75, marker_opacity=0.8)
+#experimenting wiht a better map --> px mapbox
+fig = px.choropleth_mapbox(df, geojson=my_regions_geo_dun,
+locations='DUN',
+featureidkey="properties.DUN",
+mapbox_style="carto-positron",
+opacity=0.5,
+zoom=7,
+center = {"lat": 2.0301, "lon": 103.3185},
+color = 'Parliament',
+hover_name='DUN_Parliament',
+hover_data={'DUN No': False, 'predicted_win': False, 'DUN': False,'Parliament': False,'PH': True, 'Non-PH': True, 'Not Sure/Others': True},
+)
 
 
-# fig.update_layout(plot_bgcolor='rgb(240, 248, 255)')
-fig.update_layout(width=1300,height=700)
+
+
+
+# if (choice == 'DUN'):
+#     fig = px.choropleth_mapbox(df, geojson=my_regions_geo_dun,
+#     locations='DUN',
+#     featureidkey="properties.DUN",
+#     mapbox_style="carto-positron",
+#     opacity=0.5,
+#     zoom=7,
+#     center = {"lat": 2.0301, "lon": 103.3185},
+#     color = 'DUN',
+#     # color_discrete_map = {
+#     # 'PH' : '#00BFFF',
+#     # 'Non PH' : '#000080',
+#     # 'Not Sure/Others': '#DC143C',
+#     # },
+#     hover_name='DUN',
+#     hover_data={'DUN No': False, 'predicted_win': False, 'DUN': False, 'PH': True, 'Non-PH': True, 'Not Sure/Others': True},
+#     )
+#
+#     fig.add_scattergeo(
+#         geojson=my_regions_geo_dun,
+#         locations = df['DUN'],
+#         text = 'DUN No',
+#         featureidkey="properties.DUN",
+#         mode = 'text',
+#         textfont = dict(size=14, color='white'),
+#         textposition='middle center',
+#         )
+#
+#
+# else:
+#     fig = px.choropleth_mapbox(df, geojson=my_regions_geo_par,
+#     locations='Parliament',
+#     featureidkey="properties.Parliament",
+#     mapbox_style="carto-positron",
+#     opacity=0.5,
+#     zoom=7,
+#     center = {"lat": 2.0301, "lon": 103.3185},
+#     # color = 'predicted_win',
+#     # color_discrete_map = {
+#     # 'PH' : 'red',
+#     # 'Non PH' : 'yello',
+#     # 'Not Sure/Others': 'green',
+#     # },
+#     hover_name='Parliament',
+#     hover_data={'Par No': False, 'predicted_win': False, 'Parliament': False, 'PH': True, 'Non-PH': True, 'Not Sure/Others': True},
+#     )
+#
+#     fig.add_scattergeo(
+#         geojson=my_regions_geo_dun,
+#         locations = df['Parliament'],
+#         text = 'Par No',
+#         featureidkey="properties.Parliament",
+#         mode = 'text',
+#         textfont = dict(size=14, color='white'),
+#         textposition='middle center',
+#         )
+
+#
+fig.update_geos(fitbounds="locations",visible=False)
+fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
 st.plotly_chart(fig, use_container_width=True)
 
 
@@ -275,24 +371,27 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
 				<div class="list-group list-group-flush">
                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}%"></div>
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}">{ph_value[0]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}%"></div>
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}">{non_value[0]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}%"></div>
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}">{notsure_value[0]}</div>
                         </div>
                     </a>
                 </a>
 				</div>
-                <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
+                <div class="card-footer" style="text-align:left; background-color: #FFF5EE">
+                        <strong>
+                            Demographics <i class="fa-solid fa-chart-pie"></i>
+                            <br>
+                        </strong>
+                        Malay: <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -305,23 +404,26 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
 				<div class="list-group list-group-flush">
                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}%"></div>
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}">{ph_value[1]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}%"></div>
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}">{non_value[1]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}%"></div>
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}">{notsure_value[1]}</div>
                         </div>
                     </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
+                        <strong>
+                            Demographics <i class="fa-solid fa-chart-pie"></i>
+                            <br>
+                        </strong>
+                        Malay: <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -334,23 +436,26 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
 				<div class="list-group list-group-flush">
                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[2]}%"></div>
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[2]}">{ph_value[2]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[2]}%"></div>
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[2]}">{non_value[2]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[2]}%"></div>
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[2]}">{notsure_value[2]}</div>
                         </div>
                     </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
+                        <strong>
+                            Demographics <i class="fa-solid fa-chart-pie"></i>
+                            <br>
+                        </strong>
+                        Malay: <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -363,23 +468,26 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
 				<div class="list-group list-group-flush">
                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[3]}%"></div>
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[3]}">{ph_value[3]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[3]}%"></div>
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[3]}">{non_value[3]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[3]}%"></div>
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[3]}">{notsure_value[3]}</div>
                         </div>
                     </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
+                        <strong>
+                            Demographics <i class="fa-solid fa-chart-pie"></i>
+                            <br>
+                        </strong>
+                        Malay: <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -401,23 +509,26 @@ def card_par_2(header, ph_value, non_value, notsure_value, color_lst):
 				<div class="list-group list-group-flush">
                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}%"></div>
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}%">{ph_value[0]}%</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}%"></div>
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}">{non_value[0]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}%"></div>
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}">{notsure_value[0]}</div>
                         </div>
                     </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
+                        <strong>
+                            Demographics <i class="fa-solid fa-chart-pie"></i>
+                            <br>
+                        </strong>
+                        Malay: <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -430,23 +541,26 @@ def card_par_2(header, ph_value, non_value, notsure_value, color_lst):
 				<div class="list-group list-group-flush">
                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}%"></div>
+                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}">{ph_value[1]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}%"></div>
+                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}">{non_value[1]}</div>
                         </div>
                     </a>
 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
                         <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}%"></div>
+                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}">{notsure_value[1]}</div>
                         </div>
                     </a>
 				</div>
                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
+                        <strong>
+                            Demographics <i class="fa-solid fa-chart-pie"></i>
+                            <br>
+                        </strong>
+                        Malay: <br>
                         Chinese: <br>
                         Indian: <br>
                         Others: <br>
@@ -462,20 +576,18 @@ def card_par_2(header, ph_value, non_value, notsure_value, color_lst):
 
 
 st.markdown("""
-<html>
-<head>
-<script src="https://kit.fontawesome.com/365011cb0b.js" crossorigin="anonymous"></script>
-</head>
-</html>
-""", unsafe_allow_html=True)
-
-st.markdown("""
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/6.0.0/css/font-awesome.min.css" rel="stylesheet"/>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-""", unsafe_allow_html=True)
-
-st.markdown("""
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 """, unsafe_allow_html=True)
+
+# <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/font-awesome.min.css" crossorigin="anonymous">
+
+# <link href="https://maxcdn.bootstrapcdn.com/font-awesome/6.0.0/css/font-awesome.min.css" rel="stylesheet"/>
+
+
+
+
 def return_color(predict):
     if predict == 'PH':
         return '#00BFFF'
@@ -485,6 +597,7 @@ def return_color(predict):
         return '#DC143C'
 
 
+st.write(df)
 if (choice == 'DUN'):
 
     #sort by value of DUN no
@@ -534,13 +647,18 @@ if (choice == 'DUN'):
 
         header_lst.extend([final_str_1, final_str_2, final_str_3, final_str_4])
         ph_lst.extend([ph_val_1, ph_val_2, ph_val_3, ph_val_4])
-        ph_lst = [round(num) for num in ph_lst]
+        # ph_lst = [round(num) for num in ph_lst]
         non_lst.extend([non_val_1, non_val_2, non_val_3, non_val_4])
-        non_lst = [round(num) for num in non_lst]
+        # non_lst = [round(num) for num in non_lst]
         others_lst.extend([others_val_1, others_val_2, others_val_3, others_val_4])
-        others_lst = [round(num) for num in others_lst]
+        # others_lst = [round(num) for num in others_lst]
         color_lst.extend([color_1, color_2, color_3, color_4])
 
+
+        st.write(ph_lst)
+        # st.write(ph_lst[0].split("%")[0])
+        ph_lst = [num.split("%")[0] for num in ph_lst]
+        st.write(ph_lst)
 
 
         st.markdown(card_dun(
@@ -598,11 +716,11 @@ elif (choice == 'Parliament'):
 
         header_lst.extend([final_str_1, final_str_2, final_str_3, final_str_4])
         ph_lst.extend([ph_val_1, ph_val_2, ph_val_3, ph_val_4])
-        ph_lst = [round(num) for num in ph_lst]
+        # ph_lst = [round(num) for num in ph_lst]
         non_lst.extend([non_val_1, non_val_2, non_val_3, non_val_4])
-        non_lst = [round(num) for num in non_lst]
+        # non_lst = [round(num) for num in non_lst]
         others_lst.extend([others_val_1, others_val_2, others_val_3, others_val_4])
-        others_lst = [round(num) for num in others_lst]
+        # others_lst = [round(num) for num in others_lst]
         color_lst.extend([color_1, color_2, color_3, color_4])
 
 
@@ -634,11 +752,11 @@ elif (choice == 'Parliament'):
 
         header_lst.extend([final_str_1, final_str_2])
         ph_lst.extend([ph_val_1, ph_val_2])
-        ph_lst = [round(num) for num in ph_lst]
+        # ph_lst = [round(num) for num in ph_lst]
         non_lst.extend([non_val_1, non_val_2])
-        non_lst = [round(num) for num in non_lst]
+        # non_lst = [round(num) for num in non_lst]
         others_lst.extend([others_val_1, others_val_2])
-        others_lst = [round(num) for num in others_lst]
+        # others_lst = [round(num) for num in others_lst]
         color_lst.extend([color_1, color_2])
 
         st.markdown(card_par_2(
