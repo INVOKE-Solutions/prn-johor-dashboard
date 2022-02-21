@@ -65,34 +65,36 @@ for i in range(len(my_regions_geo_par['features'])):
 
 
 df = pd.read_excel("Johor PRN.xlsx", sheet_name='transposed')
-df['PH'].replace(np.nan, 0, inplace=True)
-df['Non-PH'].replace(np.nan, 0, inplace=True)
-df['Not Sure/Others'].replace(np.nan, 0, inplace=True)
+df = df.rename({'PH': 'PH_1', 'Non-PH': 'Non-PH_1', 'Not Sure/Others': 'Not Sure/Others_1'}, axis=1)
+
+df['PH_1'].replace(np.nan, 0, inplace=True)
+df['Non-PH_1'].replace(np.nan, 0, inplace=True)
+df['Not Sure/Others_1'].replace(np.nan, 0, inplace=True)
 
 
 #recalculate the % to take into acount only the 3 columns
 def recalculate_nonph(x):
-    non_ph = x['Non-PH']
-    not_sure = x['Not Sure/Others']
-    ph = x['PH']
+    non_ph = x['Non-PH_1']
+    not_sure = x['Not Sure/Others_1']
+    ph = x['PH_1']
 
     total = (non_ph*100) + (not_sure*100) + (ph*100)
     temp_1 = (non_ph*100) / total * 100
     return temp_1
 
 def recalculate_notsure(x):
-    non_ph = x['Non-PH']
-    not_sure = x['Not Sure/Others']
-    ph = x['PH']
+    non_ph = x['Non-PH_1']
+    not_sure = x['Not Sure/Others_1']
+    ph = x['PH_1']
 
     total = (non_ph*100) + (not_sure*100) + (ph*100)
     temp_2 = (not_sure*100) / total * 100
     return temp_2
 
 def recalculate_ph(x):
-    non_ph = x['Non-PH']
-    not_sure = x['Not Sure/Others']
-    ph = x['PH']
+    non_ph = x['Non-PH_1']
+    not_sure = x['Not Sure/Others_1']
+    ph = x['PH_1']
 
     total = (non_ph*100) + (not_sure*100) + (ph*100)
     temp_3 = (ph*100) / total * 100
@@ -104,9 +106,9 @@ temp_nonph = df.apply(recalculate_nonph, axis=1)
 temp_notsure = df.apply(recalculate_notsure, axis=1)
 temp_ph = df.apply(recalculate_ph, axis=1)
 
-df['Non-PH'] = temp_nonph
-df['Not Sure/Others'] = temp_notsure
-df['PH'] = temp_ph
+df['Non-PH_1'] = temp_nonph
+df['Not Sure/Others_1'] = temp_notsure
+df['PH_1'] = temp_ph
 
 # df = df.drop('Refused to answer', axis=1)
 df = df.loc[:, df.columns.drop('Refuse to answer')]
@@ -119,15 +121,15 @@ idc = df[df['DUN']=='KOTA ISKANDAR'].index.to_list()
 df.loc[idc[0], 'DUN'] = 'ISKANDAR PUTERI'
 
 
-df['Non-PH'] = round(df['Non-PH'])
-df['PH'] = round(df['PH'])
-df['Not Sure/Others'] = round(df['Not Sure/Others'])
+df['Non-PH_1'] = round(df['Non-PH_1'])
+df['PH_1'] = round(df['PH_1'])
+df['Not Sure/Others_1'] = round(df['Not Sure/Others_1'])
 
 
 # st.write(df[df['DUN']=='KOTA ISKANDAR'])
 
 #layang2 ada beza space with the one in geojson file
-df['predicted_win'] = df[['Non-PH','Not Sure/Others','PH']].idxmax(axis=1)
+df['predicted_win'] = df[['Non-PH_1','Not Sure/Others_1','PH_1']].idxmax(axis=1)
 
 
 
@@ -148,7 +150,7 @@ for i in idc:
 
 
 #rearrange the columns
-df = df[['Parliament','Par No','DUN','DUN No','PH','Non-PH','Not Sure/Others','predicted_win']]
+df = df[['Parliament','Par No','DUN','DUN No','PH_1','Non-PH_1','Not Sure/Others_1','predicted_win']]
 
 #combine for header when hover over each dun
 def combine_dun(x):
@@ -157,12 +159,12 @@ def combine_dun(x):
 def combine_percent(x):
     return str(round(x)) + "%"
 
-# df['Parliament_1'] = df.apply(combine_par, axis=1)
+
+#this contain the % to be included in the map
 df['DUN_Parliament'] = df.apply(combine_dun, axis=1)
-df['PH'] = df['PH'].apply(combine_percent)
-df['Non-PH'] = df['Non-PH'].apply(combine_percent)
-df['Not Sure/Others'] = df['Not Sure/Others'].apply(combine_percent)
-# st.write(df)
+df['PH'] = df['PH_1'].apply(combine_percent)
+df['Non-PH'] = df['Non-PH_1'].apply(combine_percent)
+df['Not Sure/Others'] = df['Not Sure/Others_1'].apply(combine_percent)
 
 
 #for parliament will need to divide appropriately
@@ -355,212 +357,242 @@ div.Multiselect > multiselect:first-child {
 </style>""", unsafe_allow_html=True)
 
 
-# option = st.multiselect('Filter by: ',['PH', 'Non-PH', 'Fence Sitters'],['PH', 'Non-PH', 'Fence Sitters'])
+
+def card_dun(header, ph_value, non_value, notsure_value, color_lst):
+    return f"""
+    <div class="d-flex mt-5 justify-content-center" style="padding-left: 50px;">
+    			<div class="card" style="width: 30em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+    				<div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
+                    {header[0]}
+                    </div>
+                    <div class='container'>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="list-group list-group-flush">
+                                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                                        <div class="progress">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 25px">
+                                5%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+                        <strong>Demographics <br> </strong>
+                        Malay:  <br>
+                        Chinese: <br>
+                        Indian: <br>
+                        Others: <br>
+                    </div>
+            </div>
+    """
+
 
 
 
 
 #will create a card using boostrap incorporated into streamlit
-def card_dun(header, ph_value, non_value, notsure_value, color_lst):
-    return f"""
-        <div class="d-flex mt-5 justify-content-center" style="padding-left: 50px;">
-			<div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
-                {header[0]}
-                </div>
-				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}">{ph_value[0]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}">{non_value[0]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}">{notsure_value[0]}</div>
-                        </div>
-                    </a>
-                </a>
-				</div>
-                <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
-                        Chinese: <br>
-                        Indian: <br>
-                        Others: <br>
-                </div>
-			</div>
-			<div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: {color_lst[1]};color: #FFFFFF">
-                {header[1]}
-                </div>
-				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}">{ph_value[1]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}">{non_value[1]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}">{notsure_value[1]}</div>
-                        </div>
-                    </a>
-				</div>
-                <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
-                        Chinese: <br>
-                        Indian: <br>
-                        Others: <br>
-                </div>
-			</div>
-            <div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: {color_lst[2]};color: #FFFFFF">
-                {header[2]}
-                </div>
-				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[2]}">{ph_value[2]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[2]}">{non_value[2]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[2]}">{notsure_value[2]}</div>
-                        </div>
-                    </a>
-				</div>
-                <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
-                        Chinese: <br>
-                        Indian: <br>
-                        Others: <br>
-                </div>
-			</div>
-            <div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: {color_lst[3]};color: #FFFFFF">
-                {header[3]}
-                </div>
-				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[3]}">{ph_value[3]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[3]}">{non_value[3]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[3]}">{notsure_value[3]}</div>
-                        </div>
-                    </a>
-				</div>
-                <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>Demographics <br> </strong>
-                        Malay:  <br>
-                        Chinese: <br>
-                        Indian: <br>
-                        Others: <br>
-                </div>
-			</div>
-            </div>
-        </div>
-    """
+# def card_dun(header, ph_value, non_value, notsure_value, color_lst):
+#     return f"""
+#         <div class="d-flex mt-5 justify-content-center" style="padding-left: 50px;">
+# 			<div class="card" style="width: 60em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+# 				<div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
+#                 {header[0]}
+#                 </div>
+# 				<div class="list-group list-group-flush">
+#                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}%">{ph_value[0]}%</div>
+#                         </div>
+#                     </a>
+# 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}%">{non_value[0]}%</div>
+#                         </div>
+#                     </a>
+# 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}%">{notsure_value[0]}%</div>
+#                         </div>
+#                     </a>
+#                 </a>
+# 				</div>
+#                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+#                         <strong>Demographics <br> </strong>
+#                         Malay:  <br>
+#                         Chinese: <br>
+#                         Indian: <br>
+#                         Others: <br>
+#                 </div>
+# 			</div>
+# 			<div class="card" style="width: 60em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+# 				<div class="card-header" style="background-color: {color_lst[1]};color: #FFFFFF">
+#                 {header[1]}
+#                 </div>
+# 				<div class="list-group list-group-flush">
+#                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}%">{ph_value[1]}%</div>
+#                         </div>
+#                     </a>
+# 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}%">{non_value[1]}%</div>
+#                         </div>
+#                     </a>
+# 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}%">{notsure_value[1]}%</div>
+#                         </div>
+#                     </a>
+# 				</div>
+#                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+#                         <strong>Demographics <br> </strong>
+#                         Malay:  <br>
+#                         Chinese: <br>
+#                         Indian: <br>
+#                         Others: <br>
+#                 </div>
+# 			</div>
+#             <div class="card" style="width: 60em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+# 				<div class="card-header" style="background-color: {color_lst[2]};color: #FFFFFF">
+#                 {header[2]}
+#                 </div>
+# 				<div class="list-group list-group-flush">
+#                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[2]}%">{ph_value[2]}%</div>
+#                         </div>
+#                     </a>
+# 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[2]}%">{non_value[2]}%</div>
+#                         </div>
+#                     </a>
+# 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[2]}%">{notsure_value[2]}%</div>
+#                         </div>
+#                     </a>
+# 				</div>
+#                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+#                         <strong>Demographics <br> </strong>
+#                         Malay:  <br>
+#                         Chinese: <br>
+#                         Indian: <br>
+#                         Others: <br>
+#                 </div>
+# 			</div>
+#             <div class="card" style="width: 60em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+# 				<div class="card-header" style="background-color: {color_lst[3]};color: #FFFFFF">
+#                 {header[3]}
+#                 </div>
+# 				<div class="list-group list-group-flush">
+#                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[3]}%">{ph_value[3]}%</div>
+#                         </div>
+#                     </a>
+# 					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[3]}%">{non_value[3]}%</div>
+#                         </div>
+#                     </a>
+# 					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+#                         <div class="w3-light-grey w3-round-xlarge">
+#                             <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[3]}%">{notsure_value[3]}%</div>
+#                         </div>
+#                     </a>
+# 				</div>
+#                 <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+#                         <strong>Demographics <br> </strong>
+#                         Malay:  <br>
+#                         Chinese: <br>
+#                         Indian: <br>
+#                         Others: <br>
+#                 </div>
+# 			</div>
+#             </div>
+#         </div>
+#     """
 
 
 #susun in terms of 2
 def card_par_2(header, ph_value, non_value, notsure_value, color_lst):
     return f"""
-        <div class="d-flex mt-5 justify-content-center" style="padding-left: 50px;">
-			<div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
-                {header[0]}
-                </div>
-				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}">{ph_value[0]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}">{non_value[0]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}">{notsure_value[0]}</div>
-                        </div>
-                    </a>
-				</div>
-                <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>
-                            Demographics <i class="fa-solid fa-chart-pie"></i>
-                            <br>
-                        </strong>
-                        Malay: <br>
-                        Chinese: <br>
-                        Indian: <br>
-                        Others: <br>
-                </div>
-			</div>
-			<div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-				<div class="card-header" style="background-color: {color_lst[1]};color: #FFFFFF">
-                {header[1]}
-                </div>
-				<div class="list-group list-group-flush">
-                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}">{ph_value[1]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}">{non_value[1]}</div>
-                        </div>
-                    </a>
-					<a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
-                        <div class="w3-light-grey w3-round-xlarge">
-                            <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}">{notsure_value[1]}</div>
-                        </div>
-                    </a>
-				</div>
-                <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                        <strong>
-                            Demographics <i class="fa-solid fa-chart-pie"></i>
-                            <br>
-                        </strong>
-                        Malay: <br>
-                        Chinese: <br>
-                        Indian: <br>
-                        Others: <br>
-                </div>
-			</div>
-            <div style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-			</div>
-            <div style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-			</div>
+    <div class="d-flex mt-5 justify-content-center" style="padding-left: 50px;">
+        <div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+            <div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
+            {header[0]}
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                    <div class="w3-light-grey w3-round-xlarge">
+                        <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[0]}%">{ph_value[0]}%</div>
+                    </div>
+                </a>
+                <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                    <div class="w3-light-grey w3-round-xlarge">
+                        <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[0]}%">{non_value[0]}%</div>
+                    </div>
+                </a>
+                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+                    <div class="w3-light-grey w3-round-xlarge">
+                        <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[0]}%">{notsure_value[0]}%</div>
+                    </div>
+                </a>
+            </div>
+            <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+                    <strong>Demographics <br> </strong>
+                    Malay:  <br>
+                    Chinese: <br>
+                    Indian: <br>
+                    Others: <br>
+            </div>
         </div>
+        <div class="card" style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+            <div class="card-header" style="background-color: {color_lst[1]};color: #FFFFFF">
+            {header[1]}
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                    <div class="w3-light-grey w3-round-xlarge">
+                        <div class="w3-container w3-blue w3-round-xlarge w3-center" style="height:24px;width:{ph_value[1]}%">{ph_value[1]}%</div>
+                    </div>
+                </a>
+                <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                    <div class="w3-light-grey w3-round-xlarge">
+                        <div class="w3-container w3-indigo w3-round-xlarge w3-center" style="height:24px;width:{non_value[1]}%">{non_value[1]}%</div>
+                    </div>
+                </a>
+                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitter</strong>
+                    <div class="w3-light-grey w3-round-xlarge">
+                        <div class="w3-container w3-red w3-round-xlarge w3-center" style="height:24px;width:{notsure_value[1]}%">{notsure_value[1]}%</div>
+                    </div>
+                </a>
+            </div>
+            <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+                    <strong>Demographics <br> </strong>
+                    Malay:  <br>
+                    Chinese: <br>
+                    Indian: <br>
+                    Others: <br>
+            </div>
+        </div>
+        <div style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+        </div>
+        <div style="width: 20em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+        </div>
+    </div>
 
-    """
+"""
+
 
 
 st.markdown("""
@@ -577,12 +609,13 @@ st.markdown("""
 
 
 def return_color(predict):
-    if predict == 'PH':
-        return '#00BFFF'
-    elif predict == 'Non-PH':
-        return '#000080'
+    if predict == 'PH_1':
+        return '#1E90FF' #blue
+    elif predict == 'Non-PH_1':
+        return '#FF0000' #red
     else:
-        return '#DC143C'
+        return '#A9A9A9' #dark grey
+
 
 
 if (choice == 'DUN'):
@@ -604,41 +637,41 @@ if (choice == 'DUN'):
 
         idc = df[df['DUN']==lst_dun[i]].index.to_list()
         final_str_1 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
-        ph_val_1 = df.loc[idc[0], 'PH']
-        non_val_1 = df.loc[idc[0], 'Non-PH']
-        others_val_1 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_1 = df.loc[idc[0], 'PH_1']
+        non_val_1 = df.loc[idc[0], 'Non-PH_1']
+        others_val_1 = df.loc[idc[0], 'Not Sure/Others_1']
         color_1 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['DUN']==lst_dun[i+1]].index.to_list()
         final_str_2 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
-        ph_val_2 = df.loc[idc[0], 'PH']
-        non_val_2 = df.loc[idc[0], 'Non-PH']
-        others_val_2 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_2 = df.loc[idc[0], 'PH_1']
+        non_val_2 = df.loc[idc[0], 'Non-PH_1']
+        others_val_2 = df.loc[idc[0], 'Not Sure/Others_1']
         color_2 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['DUN']==lst_dun[i+2]].index.to_list()
         final_str_3 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
-        ph_val_3 = df.loc[idc[0], 'PH']
-        non_val_3 = df.loc[idc[0], 'Non-PH']
-        others_val_3 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_3 = df.loc[idc[0], 'PH_1']
+        non_val_3 = df.loc[idc[0], 'Non-PH_1']
+        others_val_3 = df.loc[idc[0], 'Not Sure/Others_1']
         color_3 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['DUN']==lst_dun[i+3]].index.to_list()
         final_str_4 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
-        ph_val_4 = df.loc[idc[0], 'PH']
-        non_val_4 = df.loc[idc[0], 'Non-PH']
-        others_val_4 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_4 = df.loc[idc[0], 'PH_1']
+        non_val_4 = df.loc[idc[0], 'Non-PH_1']
+        others_val_4 = df.loc[idc[0], 'Not Sure/Others_1']
         color_4 = return_color(df.loc[idc[0], 'predicted_win'])
 
 
 
         header_lst.extend([final_str_1, final_str_2, final_str_3, final_str_4])
         ph_lst.extend([ph_val_1, ph_val_2, ph_val_3, ph_val_4])
-        # ph_lst = [round(num) for num in ph_lst]
+        ph_lst = [round(num) for num in ph_lst]
         non_lst.extend([non_val_1, non_val_2, non_val_3, non_val_4])
-        # non_lst = [round(num) for num in non_lst]
+        non_lst = [round(num) for num in non_lst]
         others_lst.extend([others_val_1, others_val_2, others_val_3, others_val_4])
-        # others_lst = [round(num) for num in others_lst]
+        others_lst = [round(num) for num in others_lst]
         color_lst.extend([color_1, color_2, color_3, color_4])
 
 
@@ -669,39 +702,39 @@ elif (choice == 'Parliament'):
 
         idc = df[df['Parliament']==lst_par[i]].index.to_list()
         final_str_1 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
-        ph_val_1 = df.loc[idc[0], 'PH']
-        non_val_1 = df.loc[idc[0], 'Non-PH']
-        others_val_1 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_1 = df.loc[idc[0], 'PH_1']
+        non_val_1 = df.loc[idc[0], 'Non-PH_1']
+        others_val_1 = df.loc[idc[0], 'Not Sure/Others_1']
         color_1 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['Parliament']==lst_par[i+1]].index.to_list()
         final_str_2 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
-        ph_val_2 = df.loc[idc[0], 'PH']
-        non_val_2 = df.loc[idc[0], 'Non-PH']
-        others_val_2 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_2 = df.loc[idc[0], 'PH_1']
+        non_val_2 = df.loc[idc[0], 'Non-PH_1']
+        others_val_2 = df.loc[idc[0], 'Not Sure/Others_1']
         color_2 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['Parliament']==lst_par[i+2]].index.to_list()
         final_str_3 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
-        ph_val_3 = df.loc[idc[0], 'PH']
-        non_val_3 = df.loc[idc[0], 'Non-PH']
-        others_val_3 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_3 = df.loc[idc[0], 'PH_1']
+        non_val_3 = df.loc[idc[0], 'Non-PH_1']
+        others_val_3 = df.loc[idc[0], 'Not Sure/Others_1']
         color_3 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['Parliament']==lst_par[i+3]].index.to_list()
         final_str_4 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
-        ph_val_4 = df.loc[idc[0], 'PH']
-        non_val_4 = df.loc[idc[0], 'Non-PH']
-        others_val_4 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_4 = df.loc[idc[0], 'PH_1']
+        non_val_4 = df.loc[idc[0], 'Non-PH_1']
+        others_val_4 = df.loc[idc[0], 'Not Sure/Others_1']
         color_4 = return_color(df.loc[idc[0], 'predicted_win'])
 
         header_lst.extend([final_str_1, final_str_2, final_str_3, final_str_4])
         ph_lst.extend([ph_val_1, ph_val_2, ph_val_3, ph_val_4])
-        # ph_lst = [round(num) for num in ph_lst]
+        ph_lst = [round(num) for num in ph_lst]
         non_lst.extend([non_val_1, non_val_2, non_val_3, non_val_4])
-        # non_lst = [round(num) for num in non_lst]
+        non_lst = [round(num) for num in non_lst]
         others_lst.extend([others_val_1, others_val_2, others_val_3, others_val_4])
-        # others_lst = [round(num) for num in others_lst]
+        others_lst = [round(num) for num in others_lst]
         color_lst.extend([color_1, color_2, color_3, color_4])
 
 
@@ -719,26 +752,27 @@ elif (choice == 'Parliament'):
 
         idc = df[df['Parliament']==lst_par[i]].index.to_list()
         final_str_1 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
-        ph_val_1 = df.loc[idc[0], 'PH']
-        non_val_1 = df.loc[idc[0], 'Non-PH']
-        others_val_1 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_1 = df.loc[idc[0], 'PH_1']
+        non_val_1 = df.loc[idc[0], 'Non-PH_1']
+        others_val_1 = df.loc[idc[0], 'Not Sure/Others_1']
         color_1 = return_color(df.loc[idc[0], 'predicted_win'])
 
         idc = df[df['Parliament']==lst_par[i+1]].index.to_list()
         final_str_2 = 'P' + df.loc[idc[0], 'Par No'] + ' ' + str(df.loc[idc[0], 'Parliament'])
-        ph_val_2 = df.loc[idc[0], 'PH']
-        non_val_2 = df.loc[idc[0], 'Non-PH']
-        others_val_2 = df.loc[idc[0], 'Not Sure/Others']
+        ph_val_2 = df.loc[idc[0], 'PH_1']
+        non_val_2 = df.loc[idc[0], 'Non-PH_1']
+        others_val_2 = df.loc[idc[0], 'Not Sure/Others_1']
         color_2 = return_color(df.loc[idc[0], 'predicted_win'])
 
         header_lst.extend([final_str_1, final_str_2])
         ph_lst.extend([ph_val_1, ph_val_2])
-        # ph_lst = [round(num) for num in ph_lst]
+        ph_lst = [round(num) for num in ph_lst]
         non_lst.extend([non_val_1, non_val_2])
-        # non_lst = [round(num) for num in non_lst]
+        non_lst = [round(num) for num in non_lst]
         others_lst.extend([others_val_1, others_val_2])
-        # others_lst = [round(num) for num in others_lst]
+        others_lst = [round(num) for num in others_lst]
         color_lst.extend([color_1, color_2])
+
 
         st.markdown(card_par_2(
         header_lst, ph_lst, non_lst, others_lst, color_lst
