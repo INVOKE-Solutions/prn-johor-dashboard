@@ -368,17 +368,23 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
                         <div class='container'>
                             <div class="list-group list-group-flush">
                                 <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width: 10%;height:40px;display:inline-block;background-color: #FF0000"">
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={ph_value[0]} aria-valuemin="0" aria-valuemax="100" style="width: {ph_value[0]}%;background-color: #FF0000"">
                                     </div>
-                                    <span style="font-size:14px">10%</span>
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{ph_value[0]}%</span>
                                 </div>
                                 </a>
                                 <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={non_lst[0]} aria-valuemin="0" aria-valuemax="100" style="width: {non_lst[0]}%;height:40px;display:inline-block;;background-color: #0000CD">
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={non_value[0]} aria-valuemin="0" aria-valuemax="100" style="width: {non_value[0]}%;background-color: #0000CD">
                                     </div>
-                                    <span style="float: right;font-size:14px">{non_lst[0]}%</span>
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{non_value[0]}%</span>
+                                </a>
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={notsure_value[0]} aria-valuemin="0" aria-valuemax="100" style="width: {notsure_value[0]}%;background-color: #A9A9A9">
+                                    </div>
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{notsure_value[0]}%</span>
                                 </a>
                             </div>
                         </div>
@@ -395,37 +401,26 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
                         {header[1]}
                         </div>
                         <div class='container'>
-                            <div class="row">
-                                <div class="col-9">
-                                    <div class="list-group list-group-flush">
-                                        <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: {ph_value[1]}%;background-color: #FF0000" aria-valuenow={ph_value[0]} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </a>
-                                        <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: {non_value[1]}%;background-color: #0000CD" aria-valuenow={non_value[0]} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </a>
-                                        <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: {notsure_value[1]}%;background-color: #A9A9A9" aria-valuenow={notsure_value[0]} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </a>
+                            <div class="list-group list-group-flush">
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={ph_value[1]} aria-valuemin="0" aria-valuemax="100" style="width: {ph_value[1]}%;background-color: #FF0000"">
                                     </div>
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{ph_value[1]}%</span>
                                 </div>
-                                <div class="col-3">
-                                    <div class='progress-label' style="float: left;padding-top: 25px">
-                                    {ph_value[1]}%
+                                </a>
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={non_value[1]} aria-valuemin="0" aria-valuemax="100" style="width: {non_value[1]}%;background-color: #0000CD">
                                     </div>
-                                    <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 40px">
-                                    {non_value[1]}%
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{non_value[1]}%</span>
+                                </a>
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={notsure_value[1]} aria-valuemin="0" aria-valuemax="100" style="width: {notsure_value[1]}%;background-color: #A9A9A9">
                                     </div>
-                                    <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 40px">
-                                    {notsure_value[1]}%
-                                    </div>
-                                </div>
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{notsure_value[1]}%</span>
+                                </a>
                             </div>
                         </div>
                         <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
@@ -441,37 +436,26 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
                         {header[2]}
                         </div>
                         <div class='container'>
-                            <div class="row">
-                                <div class="col-9">
-                                    <div class="list-group list-group-flush">
-                                        <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: {ph_value[2]}%;background-color: #FF0000" aria-valuenow={ph_value[2]} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </a>
-                                        <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: {non_value[2]}%;background-color: #0000CD" aria-valuenow={non_value[2]} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </a>
-                                        <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: {notsure_value[2]}%;background-color: #A9A9A9" aria-valuenow={notsure_value[2]} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </a>
+                            <div class="list-group list-group-flush">
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={ph_value[2]} aria-valuemin="0" aria-valuemax="100" style="width: {ph_value[2]}%;background-color: #FF0000"">
                                     </div>
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{ph_value[2]}%</span>
                                 </div>
-                                <div class="col-3">
-                                    <div class='progress-label' style="float: left;padding-top: 25px">
-                                    {ph_value[2]}%
+                                </a>
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={non_value[2]} aria-valuemin="0" aria-valuemax="100" style="width: {non_value[2]}%;background-color: #0000CD">
                                     </div>
-                                    <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 40px">
-                                    {non_value[2]}%
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{non_value[2]}%</span>
+                                </a>
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={notsure_value[2]} aria-valuemin="0" aria-valuemax="100" style="width: {notsure_value[2]}%;background-color: #A9A9A9">
                                     </div>
-                                    <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 40px">
-                                    {notsure_value[2]}%
-                                    </div>
-                                </div>
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{notsure_value[2]}%</span>
+                                </a>
                             </div>
                         </div>
                         <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
@@ -487,37 +471,26 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
                         {header[3]}
                         </div>
                         <div class='container'>
-                            <div class="row">
-                                <div class="col-9">
-                                    <div class="list-group list-group-flush">
-                                        <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: {ph_value[3]}%;background-color: #FF0000" aria-valuenow={ph_value[3]} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </a>
-                                        <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: {non_value[3]}%;background-color: #0000CD" aria-valuenow={non_value[3]} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </a>
-                                        <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
-                                            <div class="progress">
-                                                <div class="progress-bar" role="progressbar" style="width: {notsure_value[3]}%;background-color: #A9A9A9" aria-valuenow={notsure_value[3]} aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </a>
+                            <div class="list-group list-group-flush">
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={ph_value[3]} aria-valuemin="0" aria-valuemax="100" style="width: {ph_value[3]}%;background-color: #FF0000"">
                                     </div>
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{ph_value[3]}%</span>
                                 </div>
-                                <div class="col-3">
-                                    <div class='progress-label' style="float: left;padding-top: 25px">
-                                    {ph_value[3]}%
+                                </a>
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={non_value[3]} aria-valuemin="0" aria-valuemax="100" style="width: {non_value[3]}%;background-color: #0000CD">
                                     </div>
-                                    <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 40px">
-                                    {non_value[3]}%
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{non_value[3]}%</span>
+                                </a>
+                                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
+                                <div class="progress" style="height:20px">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow={notsure_value[3]} aria-valuemin="0" aria-valuemax="100" style="width: {notsure_value[3]}%;background-color: #A9A9A9">
                                     </div>
-                                    <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 40px">
-                                    {notsure_value[3]}%
-                                    </div>
-                                </div>
+                                    <span style="float: right;font-size:15px;margin-left: 10px">{notsure_value[3]}%</span>
+                                </a>
                             </div>
                         </div>
                         <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
