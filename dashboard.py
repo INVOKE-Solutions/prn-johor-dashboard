@@ -362,39 +362,39 @@ def card_dun(header, ph_value, non_value, notsure_value, color_lst):
     return f"""
     <div class="d-flex mt-5 justify-content-center">
     			<div class="card">
-    				<div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
-                    {header[0]}
+    				<div class="card-header" style="background-color: {color_lst};color: #FFFFFF">
+                    {header}
                     </div>
                     <div class='container'>
                         <div class="row">
-                            <div class="col-9">
+                            <div class="col-8">
                                 <div class="list-group list-group-flush">
                                     <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
                                         <div class="progress">
-                                            <div class="progress-bar" role="progressbar" style="width: {ph_value[0]}%;background-color: #FF0000" aria-valuenow={ph_value[0]} aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-bar" role="progressbar" style="width: {ph_value}%;background-color: #FF0000" aria-valuenow={ph_value} aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </a>
                                     <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
                                         <div class="progress">
-                                            <div class="progress-bar" role="progressbar" style="width: {non_value[0]}%;background-color: #0000CD" aria-valuenow={non_value[0]} aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-bar" role="progressbar" style="width: {non_value}%;background-color: #0000CD" aria-valuenow={non_value} aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </a>
                                     <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
                                         <div class="progress">
-                                            <div class="progress-bar" role="progressbar" style="width: {notsure_value[0]}%;background-color: #A9A9A9" aria-valuenow={notsure_value[0]} aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-bar" role="progressbar" style="width: {notsure_value}%;background-color: #A9A9A9" aria-valuenow={notsure_value} aria-valuemin="0" aria-valuemax="100"></div>
                                         </div>
                                     </a>
                                 </div>
                             </div>
-                            <div class="col-3">
-                                <div class='progress-label' style="float: left;padding-top: 80%">
-                                {ph_value[0]}%
+                            <div class="col-4">
+                                <div class='progress-label' style="padding-top: 80%">
+                                {ph_value}%
                                 </div>
-                                <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 80%">
-                                {non_value[0]}%
+                                <div class='progress-label' style="padding-top: 100%">
+                                {non_value}%
                                 </div>
-                                <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 80%">
-                                {notsure_value[0]}%
+                                <div class='progress-label' style="padding-top: 150%">
+                                {notsure_value}%
                                 </div>
                             </div>
                         </div>
@@ -457,7 +457,7 @@ df.sort_values('DUN No', inplace=True)
 lst_dun = df['DUN'].tolist()
 
 
-for i in range(0, len(lst_dun)-1):
+for i in range(0, len(lst_dun)-3, 3):
     header_lst = []
     ph_lst = []
     non_lst = []
@@ -472,20 +472,21 @@ for i in range(0, len(lst_dun)-1):
     others_val_1 = df.loc[idc[0], 'Not Sure/Others_1']
     color_1 = return_color(df.loc[idc[0], 'predicted_win'])
 
-    # idc = df[df['DUN']==lst_dun[i+1]].index.to_list()
-    # final_str_2 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
-    # ph_val_2 = df.loc[idc[0], 'PH_1']
-    # non_val_2 = df.loc[idc[0], 'Non-PH_1']
-    # others_val_2 = df.loc[idc[0], 'Not Sure/Others_1']
-    # color_2 = return_color(df.loc[idc[0], 'predicted_win'])
-    #
-    # idc = df[df['DUN']==lst_dun[i+2]].index.to_list()
-    # final_str_3 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
-    # ph_val_3 = df.loc[idc[0], 'PH_1']
-    # non_val_3 = df.loc[idc[0], 'Non-PH_1']
-    # others_val_3 = df.loc[idc[0], 'Not Sure/Others_1']
-    # color_3 = return_color(df.loc[idc[0], 'predicted_win'])
-    #
+
+    idc = df[df['DUN']==lst_dun[i+1]].index.to_list()
+    final_str_2 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
+    ph_val_2 = df.loc[idc[0], 'PH_1']
+    non_val_2 = df.loc[idc[0], 'Non-PH_1']
+    others_val_2 = df.loc[idc[0], 'Not Sure/Others_1']
+    color_2 = return_color(df.loc[idc[0], 'predicted_win'])
+
+    idc = df[df['DUN']==lst_dun[i+2]].index.to_list()
+    final_str_3 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
+    ph_val_3 = df.loc[idc[0], 'PH_1']
+    non_val_3 = df.loc[idc[0], 'Non-PH_1']
+    others_val_3 = df.loc[idc[0], 'Not Sure/Others_1']
+    color_3 = return_color(df.loc[idc[0], 'predicted_win'])
+
     # idc = df[df['DUN']==lst_dun[i+3]].index.to_list()
     # final_str_4 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
     # ph_val_4 = df.loc[idc[0], 'PH_1']
@@ -494,20 +495,61 @@ for i in range(0, len(lst_dun)-1):
     # color_4 = return_color(df.loc[idc[0], 'predicted_win'])
 
 
+    col1, col2, col3= st.columns(3)
 
-    header_lst.extend([final_str_1])
-    ph_lst.extend([ph_val_1])
-    ph_lst = [round(num) for num in ph_lst]
-    non_lst.extend([non_val_1])
-    non_lst = [round(num) for num in non_lst]
-    others_lst.extend([others_val_1])
-    others_lst = [round(num) for num in others_lst]
-    color_lst.extend([color_1])
+    with col1:
+        st.markdown(card_dun(
+        final_str_1, round(ph_val_1), round(non_val_1), round(others_val_1), color_1
+        ), unsafe_allow_html=True)
 
 
-    st.markdown(card_dun(
-    header_lst, ph_lst, non_lst, others_lst, color_lst
-    ), unsafe_allow_html=True)
+    with col2:
+        st.markdown(card_dun(
+        final_str_2, round(ph_val_2), round(non_val_2), round(others_val_2), color_2
+        ), unsafe_allow_html=True)
+
+
+    with col3:
+        st.markdown(card_dun(
+        final_str_3, round(ph_val_3), round(non_val_3), round(others_val_3), color_3
+        ), unsafe_allow_html=True)
+
+    # with col4:
+    #     st.markdown(card_dun(
+    #     final_str_4, round(ph_val_4), round(non_val_4), round(others_val_4), color_4
+    #     ), unsafe_allow_html=True)
+
+
+# for i in range(0, len(lst_dun[-2:])-1,2):
+#     idc = df[df['DUN']==lst_dun[i]].index.to_list()
+#     final_str_1 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
+#     ph_val_1 = df.loc[idc[0], 'PH_1']
+#     non_val_1 = df.loc[idc[0], 'Non-PH_1']
+#     others_val_1 = df.loc[idc[0], 'Not Sure/Others_1']
+#     color_1 = return_color(df.loc[idc[0], 'predicted_win'])
+#
+#
+#     idc = df[df['DUN']==lst_dun[i+1]].index.to_list()
+#     final_str_2 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
+#     ph_val_2 = df.loc[idc[0], 'PH_1']
+#     non_val_2 = df.loc[idc[0], 'Non-PH_1']
+#     others_val_2 = df.loc[idc[0], 'Not Sure/Others_1']
+#     color_2 = return_color(df.loc[idc[0], 'predicted_win'])
+#
+#
+#     col1, col2= st.columns(2)
+#
+#     with col1:
+#         st.markdown(card_dun(
+#         final_str_1, round(ph_val_1), round(non_val_1), round(others_val_1), color_1
+#         ), unsafe_allow_html=True)
+#
+#
+#     with col2:
+#         st.markdown(card_dun(
+#         final_str_2, round(ph_val_2), round(non_val_2), round(others_val_2), color_2
+#         ), unsafe_allow_html=True)
+#
 
 #
 # st.markdown("""
