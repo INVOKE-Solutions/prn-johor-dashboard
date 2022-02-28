@@ -24,7 +24,7 @@ st.markdown("""
 <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 """, unsafe_allow_html=True)
 
-st.markdown("<h2 style='margin:-50px;padding:0px;height: 2em;overflow:auto;color: #4682B4;font-size:25px;border-bottom: 1px solid #ccc; padding-bottom: 10px;font-family: Lato, sans-serif;font-weight:900'>PRN Johor Dashboard</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='height: 2em;overflow:auto;color: #4682B4;font-size:25px;border-bottom: 1px solid #ccc;font-family: Lato, sans-serif;font-weight:900'>PRN Johor Dashboard</h2>", unsafe_allow_html=True)
 
 
 #dun johor geojson
@@ -172,7 +172,7 @@ df['Not Sure/Others'] = df['Not Sure/Others_1'].apply(combine_percent)
 
 
 #sidebar
-st.sidebar.header("Welcome @user")
+# st.sidebar.header("Welcome @user")
 # choice = st.sidebar.selectbox("Choose by Parliamen/DUN",['Parliament', 'DUN'])
 
 # if choice == "DUN":
@@ -356,151 +356,58 @@ div.Multiselect > multiselect:first-child {
 </style>""", unsafe_allow_html=True)
 
 
+#probably need to something to do with width --> control using a fucntion of css responsive
+
 def card_dun(header, ph_value, non_value, notsure_value, color_lst):
     return f"""
-
-        <div class="d-flex mt-5 justify-content-center" style="padding-left: 50px;">
-        			<div class="card" style="width: 30em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-        				<div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
-                        {header[0]}
-                        </div>
-                        <div class='container'>
-                            <div class="list-group list-group-flush">
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={ph_value[0]} aria-valuemin="0" aria-valuemax="100" style="width: {ph_value[0]}%;background-color: #FF0000"">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{ph_value[0]}%</span>
+    <div class="d-flex mt-5 justify-content-center">
+    			<div class="card">
+    				<div class="card-header" style="background-color: {color_lst[0]};color: #FFFFFF">
+                    {header[0]}
+                    </div>
+                    <div class='container'>
+                        <div class="row">
+                            <div class="col-9">
+                                <div class="list-group list-group-flush">
+                                    <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style="width: {ph_value[0]}%;background-color: #FF0000" aria-valuenow={ph_value[0]} aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style="width: {non_value[0]}%;background-color: #0000CD" aria-valuenow={non_value[0]} aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </a>
+                                    <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
+                                        <div class="progress">
+                                            <div class="progress-bar" role="progressbar" style="width: {notsure_value[0]}%;background-color: #A9A9A9" aria-valuenow={notsure_value[0]} aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </a>
                                 </div>
-                                </a>
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={non_value[0]} aria-valuemin="0" aria-valuemax="100" style="width: {non_value[0]}%;background-color: #0000CD">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{non_value[0]}%</span>
-                                </a>
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={notsure_value[0]} aria-valuemin="0" aria-valuemax="100" style="width: {notsure_value[0]}%;background-color: #A9A9A9">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{notsure_value[0]}%</span>
-                                </a>
                             </div>
-                        </div>
-                        <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                            <strong>Demographics <br> </strong>
-                            Malay:  <br>
-                            Chinese: <br>
-                            Indian: <br>
-                            Others: <br>
+                            <div class="col-3">
+                                <div class='progress-label' style="float: left;padding-top: 80%">
+                                {ph_value[0]}%
+                                </div>
+                                <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 80%">
+                                {non_value[0]}%
+                                </div>
+                                <div class='progress-label' style="float: left;margin-right: 1em;padding-top: 80%">
+                                {notsure_value[0]}%
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card" style="width: 30em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-                        <div class="card-header" style="background-color: {color_lst[1]};color: #FFFFFF">
-                        {header[1]}
-                        </div>
-                        <div class='container'>
-                            <div class="list-group list-group-flush">
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={ph_value[1]} aria-valuemin="0" aria-valuemax="100" style="width: {ph_value[1]}%;background-color: #FF0000"">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{ph_value[1]}%</span>
-                                </div>
-                                </a>
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={non_value[1]} aria-valuemin="0" aria-valuemax="100" style="width: {non_value[1]}%;background-color: #0000CD">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{non_value[1]}%</span>
-                                </a>
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={notsure_value[1]} aria-valuemin="0" aria-valuemax="100" style="width: {notsure_value[1]}%;background-color: #A9A9A9">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{notsure_value[1]}%</span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                            <strong>Demographics <br> </strong>
-                            Malay:  <br>
-                            Chinese: <br>
-                            Indian: <br>
-                            Others: <br>
-                        </div>
-                    </div>
-                    <div class="card" style="width: 30em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-                        <div class="card-header" style="background-color: {color_lst[2]};color: #FFFFFF">
-                        {header[2]}
-                        </div>
-                        <div class='container'>
-                            <div class="list-group list-group-flush">
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={ph_value[2]} aria-valuemin="0" aria-valuemax="100" style="width: {ph_value[2]}%;background-color: #FF0000"">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{ph_value[2]}%</span>
-                                </div>
-                                </a>
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={non_value[2]} aria-valuemin="0" aria-valuemax="100" style="width: {non_value[2]}%;background-color: #0000CD">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{non_value[2]}%</span>
-                                </a>
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={notsure_value[2]} aria-valuemin="0" aria-valuemax="100" style="width: {notsure_value[2]}%;background-color: #A9A9A9">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{notsure_value[2]}%</span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                            <strong>Demographics <br> </strong>
-                            Malay:  <br>
-                            Chinese: <br>
-                            Indian: <br>
-                            Others: <br>
-                        </div>
-                    </div>
-                    <div class="card" style="width: 30em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
-                        <div class="card-header" style="background-color: {color_lst[3]};color: #FFFFFF">
-                        {header[3]}
-                        </div>
-                        <div class='container'>
-                            <div class="list-group list-group-flush">
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>PH</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={ph_value[3]} aria-valuemin="0" aria-valuemax="100" style="width: {ph_value[3]}%;background-color: #FF0000"">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{ph_value[3]}%</span>
-                                </div>
-                                </a>
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>Non-PH</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={non_value[3]} aria-valuemin="0" aria-valuemax="100" style="width: {non_value[3]}%;background-color: #0000CD">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{non_value[3]}%</span>
-                                </a>
-                                <a href="#" class="list-group-item" style="color: #000000"><strong>Fence Sitters</strong>
-                                <div class="progress" style="height:20px">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow={notsure_value[3]} aria-valuemin="0" aria-valuemax="100" style="width: {notsure_value[3]}%;background-color: #A9A9A9">
-                                    </div>
-                                    <span style="float: right;font-size:15px;margin-left: 10px">{notsure_value[3]}%</span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
-                            <strong>Demographics <br> </strong>
-                            Malay:  <br>
-                            Chinese: <br>
-                            Indian: <br>
-                            Others: <br>
-                        </div>
+                    <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+                        <strong>Demographics <br> </strong>
+                        Malay:  <br>
+                        Chinese: <br>
+                        Indian: <br>
+                        Others: <br>
                     </div>
                 </div>
+            </div>
 
     """
 
@@ -509,6 +416,7 @@ st.markdown("""
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/6.0.0/css/font-awesome.min.css" rel="stylesheet"/>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 """, unsafe_allow_html=True)
 
 # <l
@@ -525,6 +433,21 @@ def return_color(predict):
 
 
 
+# st.markdown("""
+# @media only screen and (max-width: 425px) {
+#   /* For desktop: */
+#   .card {width: 100%;margin: auto;margin-right: 5%;margin-left: 5%}
+# }
+#
+# @media only screen and (max-width: 768px) {
+#   /* For desktop: */
+#   .card {width: 60%;margin: auto;margin-right: 5%;margin-left: 5%}
+# }
+# """, unsafe_allow_html=True)
+
+
+
+
 
 
 # if (choice == 'DUN'):
@@ -534,7 +457,7 @@ df.sort_values('DUN No', inplace=True)
 lst_dun = df['DUN'].tolist()
 
 
-for i in range(0, len(lst_dun)-1,4):
+for i in range(0, len(lst_dun)-1):
     header_lst = []
     ph_lst = []
     non_lst = []
@@ -549,43 +472,68 @@ for i in range(0, len(lst_dun)-1,4):
     others_val_1 = df.loc[idc[0], 'Not Sure/Others_1']
     color_1 = return_color(df.loc[idc[0], 'predicted_win'])
 
-    idc = df[df['DUN']==lst_dun[i+1]].index.to_list()
-    final_str_2 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
-    ph_val_2 = df.loc[idc[0], 'PH_1']
-    non_val_2 = df.loc[idc[0], 'Non-PH_1']
-    others_val_2 = df.loc[idc[0], 'Not Sure/Others_1']
-    color_2 = return_color(df.loc[idc[0], 'predicted_win'])
+    # idc = df[df['DUN']==lst_dun[i+1]].index.to_list()
+    # final_str_2 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
+    # ph_val_2 = df.loc[idc[0], 'PH_1']
+    # non_val_2 = df.loc[idc[0], 'Non-PH_1']
+    # others_val_2 = df.loc[idc[0], 'Not Sure/Others_1']
+    # color_2 = return_color(df.loc[idc[0], 'predicted_win'])
+    #
+    # idc = df[df['DUN']==lst_dun[i+2]].index.to_list()
+    # final_str_3 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
+    # ph_val_3 = df.loc[idc[0], 'PH_1']
+    # non_val_3 = df.loc[idc[0], 'Non-PH_1']
+    # others_val_3 = df.loc[idc[0], 'Not Sure/Others_1']
+    # color_3 = return_color(df.loc[idc[0], 'predicted_win'])
+    #
+    # idc = df[df['DUN']==lst_dun[i+3]].index.to_list()
+    # final_str_4 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
+    # ph_val_4 = df.loc[idc[0], 'PH_1']
+    # non_val_4 = df.loc[idc[0], 'Non-PH_1']
+    # others_val_4 = df.loc[idc[0], 'Not Sure/Others_1']
+    # color_4 = return_color(df.loc[idc[0], 'predicted_win'])
 
-    idc = df[df['DUN']==lst_dun[i+2]].index.to_list()
-    final_str_3 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
-    ph_val_3 = df.loc[idc[0], 'PH_1']
-    non_val_3 = df.loc[idc[0], 'Non-PH_1']
-    others_val_3 = df.loc[idc[0], 'Not Sure/Others_1']
-    color_3 = return_color(df.loc[idc[0], 'predicted_win'])
-
-    idc = df[df['DUN']==lst_dun[i+3]].index.to_list()
-    final_str_4 = 'N' + df.loc[idc[0], 'DUN No'] + ' ' + str(df.loc[idc[0], 'DUN'])
-    ph_val_4 = df.loc[idc[0], 'PH_1']
-    non_val_4 = df.loc[idc[0], 'Non-PH_1']
-    others_val_4 = df.loc[idc[0], 'Not Sure/Others_1']
-    color_4 = return_color(df.loc[idc[0], 'predicted_win'])
 
 
-
-    header_lst.extend([final_str_1, final_str_2, final_str_3, final_str_4])
-    ph_lst.extend([ph_val_1, ph_val_2, ph_val_3, ph_val_4])
+    header_lst.extend([final_str_1])
+    ph_lst.extend([ph_val_1])
     ph_lst = [round(num) for num in ph_lst]
-    non_lst.extend([non_val_1, non_val_2, non_val_3, non_val_4])
+    non_lst.extend([non_val_1])
     non_lst = [round(num) for num in non_lst]
-    others_lst.extend([others_val_1, others_val_2, others_val_3, others_val_4])
+    others_lst.extend([others_val_1])
     others_lst = [round(num) for num in others_lst]
-    color_lst.extend([color_1, color_2, color_3, color_4])
+    color_lst.extend([color_1])
 
 
     st.markdown(card_dun(
     header_lst, ph_lst, non_lst, others_lst, color_lst
     ), unsafe_allow_html=True)
 
+#
+# st.markdown("""
+# <br><br>
+# <div class="card" style="width: 30em;margin: auto;margin-right: 20px;margin-bottom: 20px;">
+#     <div class="card-header" style="background-color: #FF0000;color: #FFFFFF">
+#     testing
+#     </div>
+#     <div class="card-body">
+#     <div class="container">
+#         <div class="w3-light-grey w3-round-xlarge" style="width:100px">
+#             <div class="w3-container w3-blue w3-round-large" style="width:0%">0%</div>
+#         </div>
+#     </div>
+#     </div>
+#     <div class="card-footer" style="text-align:left; background-color: #FFF5EE;">
+#         <strong>Demographics <br> </strong>
+#         Malay:  <br>
+#         Chinese: <br>
+#         Indian: <br>
+#         Others: <br>
+#     </div>
+# </div>
+# </div>
+#
+# """, unsafe_allow_html=True)
 
 
 # elif (choice == 'Parliament'):
