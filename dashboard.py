@@ -1,11 +1,13 @@
 import streamlit as st
-st.set_page_config(page_title='JOHOR PRN', page_icon="🗳️")
+st.set_page_config(page_title='PRN Johor', page_icon="🗳️")
 import pandas as pd
 import plotly.express as px
 import numpy as np
 import requests
 import matplotlib.pyplot as plt
 from read_gsheets import *
+import plotly.graph_objects as go
+
 
 
 #adding a login page
@@ -48,18 +50,19 @@ if check_password():
 
         # to be commented
         # to hide the menu bar on the streamlit page
-        st.markdown(""" <style>
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        </style> """, unsafe_allow_html=True)
+        # st.markdown(""" <style>
+        # #MainMenu {visibility: hidden;}
+        # footer {visibility: hidden;}
+        # </style> """, unsafe_allow_html=True)
 
         st.markdown("""
         <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
         """, unsafe_allow_html=True)
 
         #the header with the line
-        st.markdown("<h2 style='height: 2em;overflow:auto;color: #000000;font-size:25px;border-bottom: 1px solid #ccc;font-family: Lato, sans-serif;font-weight:900;padding-top: 0%'>PRN Johor Dashboard</h2>", unsafe_allow_html=True)
-
+        # st.markdown("<h2 style='height: 2em;overflow:auto;color: #000000;font-size:25px;border-bottom: 1px solid #ccc;font-family: Lato, sans-serif;font-weight:900;padding-top: 0%'>PRN Johor Dashboard</h2>", unsafe_allow_html=True)
+        st.title("PRN Johor Dashboard")
+        # st.header("PRN Johor Dashboard")
 
 
         #import the dun johor geojson file to plot the coordinates for dun border
@@ -178,8 +181,15 @@ if check_password():
 
             fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
             fig.update_layout(showlegend=False)
-            st.plotly_chart(fig, use_container_width=True)
+            # fig.update_layout(title=go.layout.Title(text="Caption", font=dict(
+            #     family="Courier New, monospace",
+            #     size=22,
+            #     color="#0000FF"
+            # )))
 
+            st.caption("Overview of the Prediction Results")
+            st.plotly_chart(fig, use_container_width=True)
+            # st.markdown("<caption style='align:bottom;'>Overview of Map of Johor</caption>", unsafe_allow_html=True)
 
 
         create_map()
@@ -271,6 +281,8 @@ if check_password():
         #to know the remainder left for column order
         func_no = df.shape[0] % 3
 
+        #add total results returned
+        st.write("Results returned: " + str(df.shape[0]))
 
         for i in range(0, len(lst_dun)-1-func_no, 3):
 
