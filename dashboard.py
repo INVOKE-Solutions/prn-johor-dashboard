@@ -6,7 +6,6 @@ import numpy as np
 import requests
 import matplotlib.pyplot as plt
 from read_gsheets import *
-from boto.s3.connection import S3Connection
 
 
 #adding a login page
