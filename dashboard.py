@@ -50,10 +50,10 @@ if check_password():
 
         # to be commented
         # to hide the menu bar on the streamlit page
-        # st.markdown(""" <style>
-        # #MainMenu {visibility: hidden;}
-        # footer {visibility: hidden;}
-        # </style> """, unsafe_allow_html=True)
+        st.markdown(""" <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        </style> """, unsafe_allow_html=True)
 
         st.markdown("""
         <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
