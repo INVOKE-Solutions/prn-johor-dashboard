@@ -8,11 +8,11 @@ import matplotlib.pyplot as plt
 from read_gsheets import *
 import plotly.graph_objects as go
 
-
-# st.markdown(""" <style>
-# #MainMenu {visibility: hidden;}
-# footer {visibility: hidden;}
-# </style> """, unsafe_allow_html=True)
+#hide the main menu on the page
+st.markdown(""" <style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style> """, unsafe_allow_html=True)
 
 
 #adding a login page
@@ -49,16 +49,6 @@ def check_password():
 
 
 if check_password():
-        # st.info("succesful")
-
-
-
-        # to be commented
-        # to hide the menu bar on the streamlit page
-        # st.markdown(""" <style>
-        # #MainMenu {visibility: hidden;}
-        # footer {visibility: hidden;}
-        # </style> """, unsafe_allow_html=True)
 
         st.markdown("""
         <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
@@ -67,7 +57,6 @@ if check_password():
         #the header with the line
         # st.markdown("<h2 style='height: 2em;overflow:auto;color: #000000;font-size:25px;border-bottom: 1px solid #ccc;font-family: Lato, sans-serif;font-weight:900;padding-top: 0%'>PRN Johor Dashboard</h2>", unsafe_allow_html=True)
         st.title("PRN Johor Dashboard")
-        # st.header("PRN Johor Dashboard")
 
 
         #import the dun johor geojson file to plot the coordinates for dun border
@@ -109,14 +98,8 @@ if check_password():
         df['Non-PH_1'] = round(df['Predicted NON-PH'].apply(lambda x: x*100))
         df['PH_1'] = round(df['Predicted PH'].apply(lambda x: x*100))
 
-
-        #get the party that will win between PH and Non PH
-        df['predicted_win'] = df['Predicted Winner']
-
         #upper case the DUN column
         df['DUN'] = df['DUN'].apply(lambda x: x.upper())
-
-
 
         #combine for header when hover over each dun
         def combine_dun(x):
@@ -150,8 +133,7 @@ if check_password():
         df['Others'] = round(df['Others'].apply(lambda x: x*100), 2)
 
         #the final df
-        df = df[['ID', 'DUN','DUN_str','Malay','Chinese','India','Others','PH','PH_1','Non-PH','Non-PH_1','predicted_win']]
-
+        df = df[['ID', 'DUN','DUN_str','Malay','Chinese','India','Others','PH','PH_1','Non-PH','Non-PH_1','Predicted Winner']]
 
         #an expander if want to see map of overall?
         #experimenting wiht a better map --> px mapbox
@@ -164,7 +146,7 @@ if check_password():
             opacity=0.5,
             zoom=7,
             center = {"lat": 2.0301, "lon": 103.3185},
-            color = df["predicted_win"],
+            color = df["Predicted Winner"],
             color_discrete_map = {
             'PH Clear Win' : '#FF0000', #in descreasing shades of red
             'PH Tight Win' : '#DC143C',
@@ -172,7 +154,7 @@ if check_password():
             'Non-PH' : '#808080', #grey color
             },
             hover_name='DUN_str',
-            hover_data={'PH': True, 'Non-PH': True, 'predicted_win': True, 'DUN': False},
+            hover_data={'PH': True, 'Non-PH': True, 'Predicted Winner': True, 'DUN': False},
             )
 
             fig.update_geos(fitbounds="locations",visible=False)
@@ -186,15 +168,9 @@ if check_password():
 
             fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
             fig.update_layout(showlegend=False)
-            # fig.update_layout(title=go.layout.Title(text="Caption", font=dict(
-            #     family="Courier New, monospace",
-            #     size=22,
-            #     color="#0000FF"
-            # )))
 
             st.caption("Overview of the Prediction Results")
             st.plotly_chart(fig, use_container_width=True)
-            # st.markdown("<caption style='align:bottom;'>Overview of Map of Johor</caption>", unsafe_allow_html=True)
 
 
         create_map()
@@ -240,10 +216,10 @@ if check_password():
             </div>
             <div class="card-footer mt-10" style="text-align:left; background-color: #FFF5EE;">
             <strong>Demographics <br> </strong>
-            Malay:  {bumi}%<br>
-            Chinese: {chi}%<br>
-            Indian: {ind}%<br>
-            Others: {oth}%<br>
+            Malay:  {round(bumi)}%<br>
+            Chinese: {round(chi)}%<br>
+            Indian: {round(ind)}%<br>
+            Others: {round(oth)}%<br>
             </div>
             </div>
             </div>
@@ -277,7 +253,7 @@ if check_password():
         options = st.multiselect("State Seats Prediction Win:", ['PH Clear Win','PH Tight Win','PH Possible to Win','Non-PH'], ['PH Clear Win','PH Tight Win','PH Possible to Win', 'Non-PH'])
 
         #get the df of ph vs non ph
-        df = df[df['predicted_win'].isin(options)]
+        df = df[df['Predicted Winner'].isin(options)]
 
         #sort by value of DUN no
         df.sort_values('ID', inplace=True)
@@ -295,35 +271,35 @@ if check_password():
             final_str_1 = df.loc[idc[0], 'DUN_str']
             ph_val_1 = df.loc[idc[0], 'PH_1']
             non_val_1 = df.loc[idc[0], 'Non-PH_1']
-            color_1 = return_color(df.loc[idc[0], 'predicted_win'])
+            color_1 = return_color(df.loc[idc[0], 'Predicted Winner'])
             demo_bumi1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Malay'].values[0]
             demo_ch1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Chinese'].values[0]
             demo_ind1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['India'].values[0]
             demo_oth1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Others'].values[0]
-            win_lab1 = return_win_label(df.loc[idc[0], 'predicted_win'])
+            win_lab1 = return_win_label(df.loc[idc[0], 'Predicted Winner'])
 
 
             idc = df[df['DUN']==lst_dun[i+1]].index.to_list()
             final_str_2 = df.loc[idc[0], 'DUN_str']
             ph_val_2 = df.loc[idc[0], 'PH_1']
             non_val_2 = df.loc[idc[0], 'Non-PH_1']
-            color_2 = return_color(df.loc[idc[0], 'predicted_win'])
+            color_2 = return_color(df.loc[idc[0], 'Predicted Winner'])
             demo_bumi2 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Malay'].values[0]
             demo_ch2 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Chinese'].values[0]
             demo_ind2 = df[df['DUN']==df.loc[idc[0], 'DUN']]['India'].values[0]
             demo_oth2 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Others'].values[0]
-            win_lab2 = return_win_label(df.loc[idc[0], 'predicted_win'])
+            win_lab2 = return_win_label(df.loc[idc[0], 'Predicted Winner'])
 
             idc = df[df['DUN']==lst_dun[i+2]].index.to_list()
             final_str_3 = df.loc[idc[0], 'DUN_str']
             ph_val_3 = df.loc[idc[0], 'PH_1']
             non_val_3 = df.loc[idc[0], 'Non-PH_1']
-            color_3 = return_color(df.loc[idc[0], 'predicted_win'])
+            color_3 = return_color(df.loc[idc[0], 'Predicted Winner'])
             demo_bumi3 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Malay'].values[0]
             demo_ch3 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Chinese'].values[0]
             demo_ind3 = df[df['DUN']==df.loc[idc[0], 'DUN']]['India'].values[0]
             demo_oth3 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Others'].values[0]
-            win_lab3 = return_win_label(df.loc[idc[0], 'predicted_win'])
+            win_lab3 = return_win_label(df.loc[idc[0], 'Predicted Winner'])
 
             col1, col2, col3= st.columns(3)
 
@@ -354,23 +330,23 @@ if check_password():
             final_str_1 = df.loc[idc[0], 'DUN_str']
             ph_val_1 = df.loc[idc[0], 'PH_1']
             non_val_1 = df.loc[idc[0], 'Non-PH_1']
-            color_1 = return_color(df.loc[idc[0], 'predicted_win'])
+            color_1 = return_color(df.loc[idc[0], 'Predicted Winner'])
             demo_bumi1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Malay'].values[0]
             demo_ch1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Chinese'].values[0]
             demo_ind1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['India'].values[0]
             demo_oth1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Others'].values[0]
-            win_lab1 = return_win_label(df.loc[idc[0], 'predicted_win'])
+            win_lab1 = return_win_label(df.loc[idc[0], 'Predicted Winner'])
 
             idc = df[df['DUN']==lst_dun[len(lst_dun[-2:])-3]].index.to_list()
             final_str_2 = df.loc[idc[0], 'DUN_str']
             ph_val_2 = df.loc[idc[0], 'PH_1']
             non_val_2 = df.loc[idc[0], 'Non-PH_1']
-            color_2 = return_color(df.loc[idc[0], 'predicted_win'])
+            color_2 = return_color(df.loc[idc[0], 'Predicted Winner'])
             demo_bumi2 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Malay'].values[0]
             demo_ch2 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Chinese'].values[0]
             demo_ind2 = df[df['DUN']==df.loc[idc[0], 'DUN']]['India'].values[0]
             demo_oth2 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Others'].values[0]
-            win_lab2 = return_win_label(df.loc[idc[0], 'predicted_win'])
+            win_lab2 = return_win_label(df.loc[idc[0], 'Predicted Winner'])
 
             col1, col2, col3= st.columns(3)
 
@@ -396,12 +372,12 @@ if check_password():
             final_str_1 = df.loc[idc[0], 'DUN_str']
             ph_val_1 = df.loc[idc[0], 'PH_1']
             non_val_1 = df.loc[idc[0], 'Non-PH_1']
-            color_1 = return_color(df.loc[idc[0], 'predicted_win'])
+            color_1 = return_color(df.loc[idc[0], 'Predicted Winner'])
             demo_bumi1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Malay'].values[0]
             demo_ch1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Chinese'].values[0]
             demo_ind1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['India'].values[0]
             demo_oth1 = df[df['DUN']==df.loc[idc[0], 'DUN']]['Others'].values[0]
-            win_lab1 = return_win_label(df.loc[idc[0], 'predicted_win'])
+            win_lab1 = return_win_label(df.loc[idc[0], 'Predicted Winner'])
 
             col1, col2, col3= st.columns(3)
 
