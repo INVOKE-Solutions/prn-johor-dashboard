@@ -59,10 +59,18 @@ if check_password():
         st.title("PRN Johor Dashboard")
 
 
-        #import the dun johor geojson file to plot the coordinates for dun border
-        #if put geojson file inside local will it be faster?
-        repo_url = 'https://raw.githubusercontent.com/TindakMalaysia/Johor-Maps/master/2017/PROPOSAL/DUN/Johor_Syor_2_DUN_2017.geojson'
-        my_regions_geo_dun = requests.get(repo_url).json()
+        #will try to include cache to prevent reaching streamlit's resource limit for every single user
+        st.cache(suppress_st_warning=True)
+        def return_geojson_johor():
+            #import the dun johor geojson file to plot the coordinates for dun border
+            #if put geojson file inside local will it be faster?
+            repo_url = 'https://raw.githubusercontent.com/TindakMalaysia/Johor-Maps/master/2017/PROPOSAL/DUN/Johor_Syor_2_DUN_2017.geojson'
+            my_regions_geo_dun = requests.get(repo_url).json()
+            return my_regions_geo_dun
+
+
+
+        my_regions_geo_dun = return_geojson_johor()
 
 
         dun_dict = {}
